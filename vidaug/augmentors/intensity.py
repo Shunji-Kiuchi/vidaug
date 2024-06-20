@@ -15,12 +15,11 @@ List of augmenters:
     * Salt
 """
 
+import random
 
 import numpy as np
-import random
 import PIL
 from PIL import ImageOps
-
 
 
 class InvertColor(object):
@@ -34,8 +33,10 @@ class InvertColor(object):
         elif isinstance(clip[0], PIL.Image.Image):
             inverted = [ImageOps.invert(img) for img in clip]
         else:
-            raise TypeError('Expected numpy.ndarray or PIL.Image' +
-                            'but got list of {0}'.format(type(clip[0])))
+            raise TypeError(
+                "Expected numpy.ndarray or PIL.Image"
+                + "but got list of {0}".format(type(clip[0]))
+            )
 
         return inverted
 
@@ -50,8 +51,10 @@ class Add(object):
 
     def __init__(self, value=0):
         if value > 255 or value < -255:
-            raise TypeError('The video is blacked or whitened out since ' +
-                            'value > 255 or value < -255.')
+            raise TypeError(
+                "The video is blacked or whitened out since "
+                + "value > 255 or value < -255."
+            )
         self.value = value
 
     def __call__(self, clip):
@@ -87,7 +90,7 @@ class Multiply(object):
 
     def __init__(self, value=1.0):
         if value < 0.0:
-            raise TypeError('The video is blacked out since for value < 0.0')
+            raise TypeError("The video is blacked out since for value < 0.0")
         self.value = value
 
     def __call__(self, clip):
@@ -119,6 +122,7 @@ class Pepper(object):
         ratio (int): Determines number of black pixels on each frame of video.
         Smaller the ratio, higher the number of black pixels.
     """
+
     def __init__(self, ratio=100):
         self.ratio = ratio
 
@@ -129,7 +133,7 @@ class Pepper(object):
 
         data_final = []
         for i in range(len(clip)):
-            img = clip[i].astype(np.float)
+            img = clip[i].astype(float)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 0, img)
@@ -140,6 +144,7 @@ class Pepper(object):
         else:
             return data_final
 
+
 class Salt(object):
     """
     Augmenter that sets a certain fraction of pixel intesities to 255, hence
@@ -148,7 +153,8 @@ class Salt(object):
     Args:
         ratio (int): Determines number of white pixels on each frame of video.
         Smaller the ratio, higher the number of white pixels.
-   """
+    """
+
     def __init__(self, ratio=100):
         self.ratio = ratio
 
@@ -159,7 +165,7 @@ class Salt(object):
 
         data_final = []
         for i in range(len(clip)):
-            img = clip[i].astype(np.float)
+            img = clip[i].astype(float)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 255, img)
